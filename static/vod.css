@@ -1,0 +1,11 @@
+header {
+    z-index: 100; position: fixed; left: 0; top: 0; 
+    height: 3em; width: 20%; padding-left: 1px; padding-top: 1px;
+  } 
+
+body {
+    font-family: var(--font3);
+    background: linear-gradient(84deg, #c850c0, #4158d0);
+    width: 100%;
+    height: 100%;
+}

@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+header {
+  z-index: 100; position: fixed; left: 0; top: 0; 
+  height: 3em; width: 20%; padding-left: 1px; padding-top: 1px;
+} 
+
+body{
+  position: relative;
+  font-family: 'Poppins', sans-serif;
+}
+
+.wrapper, .search-data{
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.wrapper{
+  position: fixed;
+  height: 4000px;
+  width: 4000px;
+  border-radius: 100%;
+  background: linear-gradient(-135deg, #c850c0, #4158d0);
+  transition: all 0.4s linear;
+}
+
+.search-data{
+  position: absolute;
+  height: 50px;
+  width: 400px;
+  display: flex;
+  text-align: center;
+}
+
+.search-data input{
+  height: 100%;
+  width: 100%;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 22px;
+  font-weight: 500;
+  color: #fff;
+}
+.search-data .line{
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  background: #fff;
+  bottom: 0;
+  transform: scaleX(0);
+  transition: transform 0.4s 0.3s linear;
+}
+
+.search-data .line.active{
+  transform: scaleX(1);
+}
+
+.search-data label{
+  position: absolute;
+  top: 50%;
+  left: 0;
+  font-size: 20px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: rgba(255,255,255,0.7);
+}
+
+.search-data input:valid ~ label{
+  opacity: 0;
+}
+
+.search-data span{
+  color: #fff;
+  position: absolute;
+  width: 50px;
+  font-size: 25px;
+  right: 0;
+  top: 0;
+  line-height: 45px;
+  cursor: pointer;
+}
