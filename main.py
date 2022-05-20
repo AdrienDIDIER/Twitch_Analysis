@@ -54,19 +54,23 @@ async def get_vod_streamer(request: Request, name: str = Form()):
       "url" : video.url
       }
 
-    list_vods.append(vod)
+    if video.type == 'archive':
+      list_vods.append(vod)
 
   return templates.TemplateResponse("list_vods.html", {"request": request, "list_vods": list_vods})
 
 @app.post("/vod", response_class=HTMLResponse)
-async def home(request: Request, vod_id: int = Form(), vod_old_id: int = Form()):
+async def vod(request: Request, vod_id: int = Form(), vod_old_id: int = Form()):
   infos_vod = twitch_api.read_info_vod(vod_id)
   old_infos_vod = twitch_api.read_info_vod(vod_old_id)
 
   twitch_api.dl_vod(vod_id)
   df = twitch_api.read_chat_vod(vod_id)
+  print(df)
   df_t = twitch_api.treatment_df(df)
   df_v = twitch_api.msg_per_minutes(df_t)
+  # test = twitch_api.determine_n_best_moment(5, df_v, vod_id)
+  list_clips = twitch_api.get_n_best_moment(5, vod_id, infos_vod)
 
   infos_chart = {
     'labels' : df_v['date'].tolist(),
@@ -87,4 +91,4 @@ async def home(request: Request, vod_id: int = Form(), vod_old_id: int = Form())
   }
   data['infos_chart'] = infos_chart
   
-  return templates.TemplateResponse("vod.html", {"request": request, "vod_data": data})
+  return templates.TemplateResponse("vod.html", {"request": request, "vod_data": data, "list_clips": list_clips})

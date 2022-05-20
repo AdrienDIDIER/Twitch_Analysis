@@ -8,6 +8,18 @@
     --font3: 'Roboto', sans-serif
 }
 
+.bd-example-modal-lg .modal-dialog{
+    display: table;
+    position: relative;
+    margin: 0 auto;
+    top: calc(50% - 24px);
+  }
+
+.bd-example-modal-lg .modal-dialog .modal-content{
+    background-color: transparent;
+    border: none;
+}
+
 header {
     z-index: 100; position: fixed; left: 0; top: 0; 
     height: 3em; width: 20%; padding-left: 1px; padding-top: 1px;

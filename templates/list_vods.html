@@ -52,7 +52,7 @@
                                     {% else %}
                                         <input name="vod_old_id" id="vod_old_id" type="hidden" value=-1>
                                     {% endif %}
-                                    <button class="btn btn-warning" type="submit" form={{vod['id']}} value="Submit">Process VOD</button>
+                                    <button class="btn btn-warning" type="submit" onclick='modal()' form={{vod['id']}} value="Submit">Process VOD</button>
                                 </form>
                             </div>
                         </div>
@@ -62,6 +62,19 @@
             </div>
         </div>
     </main>
+    <div class="modal fade bd-example-modal-lg" data-backdrop="static" data-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content" style="width: 48px">
+                <span class="fa fa-spinner fa-spin fa-3x"></span>
+            </div>
+        </div>
+    </div>
 </body>
+
+<script>
+    function modal(){
+       $('.modal').modal('show');
+    }
+</script>
 
 </html>
