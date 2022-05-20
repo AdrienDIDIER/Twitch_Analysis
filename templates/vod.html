@@ -41,7 +41,11 @@
                     <p class="text-sm mb-0 text-capitalize font-weight-bold">View Count</p>
                     <h5 class="font-weight-bolder mb-0">
                       {{vod_data['infos_vod']['view_count']}}
-                      <span class="text-success text-sm font-weight-bolder">+n%</span>
+                      {% if vod_data['evol']['evol_view_count'] >= 0%}
+                        <span class="text-success text-sm font-weight-bolder">{{vod_data['evol']['evol_view_count']}}%</span>
+                      {% else %}
+                        <span class="text-danger text-sm font-weight-bolder">{{vod_data['evol']['evol_view_count']}}%</span>
+                      {% endif %}
                     </h5>
                   </div>
                 </div>
@@ -63,7 +67,11 @@
                     <p class="text-sm mb-0 text-capitalize font-weight-bold">Duration</p>
                     <h5 class="font-weight-bolder mb-0">
                       {{vod_data['infos_vod']['duration']}}
-                      <span class="text-success text-sm font-weight-bolder">+n%</span>
+                      {% if vod_data['evol']['evol_duration'] >= 0  %}
+                        <span class="text-success text-sm font-weight-bolder">{{vod_data['evol']['evol_duration']}}%</span>
+                      {% else %}
+                        <span class="text-danger text-sm font-weight-bolder">{{vod_data['evol']['evol_duration']}}%</span>
+                      {% endif %}
                     </h5>
                   </div>
                 </div>
@@ -85,7 +93,6 @@
                     <p class="text-sm mb-0 text-capitalize font-weight-bold">Date</p>
                     <h5 class="font-weight-bolder mb-0">
                       {{vod_data['infos_vod']['created_at']}}
-                      <span class="text-danger text-sm font-weight-bolder">n%</span>
                     </h5>
                   </div>
                 </div>
@@ -124,7 +131,7 @@
         <div class="col">
           <div class="card z-index-2">
             <div class="card-header pb-0">
-              <h6>View overview</h6>
+              <h6>Message per minutes overview</h6>
             </div>
             <div class="card-body p-3">
               <div class="chart">

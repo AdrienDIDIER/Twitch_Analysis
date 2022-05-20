@@ -47,6 +47,11 @@
                             <div class="text-center my-4">
                                 <form action="/vod" method="post" id={{vod['id']}}>
                                     <input name="vod_id" id="vod_id" type="hidden" value={{vod['id']}}>
+                                    {% if loop.last == False %}
+                                        <input name="vod_old_id" id="vod_old_id" type="hidden" value={{loop.nextitem['id']}}>
+                                    {% else %}
+                                        <input name="vod_old_id" id="vod_old_id" type="hidden" value=-1>
+                                    {% endif %}
                                     <button class="btn btn-warning" type="submit" form={{vod['id']}} value="Submit">Process VOD</button>
                                 </form>
                             </div>
