@@ -5,10 +5,12 @@ import numpy as np
 import json
 import twitch
 import requests
+import urllib.request
 
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from pytimeparse.timeparse import timeparse
+from make_video import concat_clips
 
 load_dotenv()
 
@@ -32,9 +34,9 @@ headers = {
 }
 
 def dl_vod(VIDEO_ID):
-    if os.path.exists("./data/" + str(VIDEO_ID) + ".json"):
-        return "Done cache"
-    cmd = 'tcd --client-id ' + CLIENT_ID + ' --client-secret ' + CLIENT_SECRET + ' --video ' + str(VIDEO_ID) + ' --format json --output ./data'
+    if os.path.exists("./data/" + str(VIDEO_ID) + "/" + str(VIDEO_ID) + ".json"):
+        return
+    cmd = 'tcd --client-id ' + CLIENT_ID + ' --client-secret ' + CLIENT_SECRET + ' --video ' + str(VIDEO_ID) + ' --format json --output ./data/' + str(VIDEO_ID) + '/'
     os.system(cmd)
     return "Done DL"
 
@@ -48,7 +50,6 @@ def msg_per_minutes(df):
     msg_per_min['created_at'] = pd.to_datetime(msg_per_min['created_at'])
     msg_per_min['nb_messages'] = 1
 
-    print(msg_per_min)
     msg_per_min = msg_per_min.groupby(
             pd.Grouper(
                 key='created_at', 
@@ -69,7 +70,7 @@ def determine_n_best_moment(nb, df, VIDEO_ID):
             "offset": row['content_offset_seconds'],
         }
         res = requests.post('https://api.twitch.tv/helix/clips', data = data, headers = headers)
-        print(res.text)
+
     return
 
 def get_n_best_moment(n, VIDEO_ID, infos_vod):
@@ -80,18 +81,50 @@ def get_n_best_moment(n, VIDEO_ID, infos_vod):
     list_clips = json.loads(res.text)['data']
 
     return_list = []
+    list_clips_to_mount = []
     for clip in list_clips:
-        print(helix.user(clip['creator_name']))
-        clip['url_user_image'] = helix.user(clip['creator_name']).profile_image_url
+
         return_list.append(clip)
-    return list_clips
+        clip['url_user_image'] = helix.user(clip['creator_name']).profile_image_url
+
+
+        basepath = './data/' + str(VIDEO_ID) + '/clips/'
+        slug = clip['url'].split('/')[-1]
+        thumb_url = clip['thumbnail_url']
+        mp4_url = thumb_url.split("-preview",1)[0] + ".mp4"
+        out_filename = slug + ".mp4"
+        output_path = (basepath + out_filename)
+
+        # create the basepath directory
+        if not os.path.exists(basepath):
+            os.makedirs(basepath)
+            
+        try:
+            list_clips_to_mount.append(
+                {
+                    'path':output_path,
+                    'text': clip['creator_name'] + " : " + clip['title']
+                }
+            )
+
+            if os.path.exists(output_path):
+                continue
+
+            urllib.request.urlretrieve(mp4_url, output_path)
+        except Exception as e:
+            print(e)
+            print("An exception occurred")
+
+    # url_mounted = concat_clips(VIDEO_ID, list_clips_to_mount)
+    url_mounted = ""
+    return list_clips, url_mounted
 
 def read_chat_vod(VIDEO_ID):
-    with open('data/' + str(VIDEO_ID) + '.json', 'r') as f:
+    with open('data/' + str(VIDEO_ID) + "/" + str(VIDEO_ID) + '.json', 'r') as f:
         data = json.load(f)
     data_normalize = pd.json_normalize(data['comments'])
     df = pd.DataFrame.from_records(data_normalize)
-    print(df)
+
     return df
 
 def read_info_vod(VIDEO_ID):

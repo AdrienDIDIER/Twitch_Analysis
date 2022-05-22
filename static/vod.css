@@ -9,3 +9,14 @@ body {
     width: 100%;
     height: 100%;
 }
+
+.bd-example-modal-lg .modal-dialog{
+  display: table;
+  position: relative;
+  margin: 0 auto;
+}
+
+.bd-example-modal-lg .modal-dialog .modal-content{
+  background-color: transparent;
+  border: none;
+}

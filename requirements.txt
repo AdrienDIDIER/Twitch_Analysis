@@ -26,3 +26,5 @@ twitch-python==0.0.20
 typing_extensions==4.2.0
 urllib3==1.26.9
 uvicorn==0.17.6
+pytimeparse==1.1.8
+moviepy==1.0.3

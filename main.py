@@ -25,6 +25,8 @@ helix = twitch.Helix(CLIENT_ID, CLIENT_SECRET)
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/data", StaticFiles(directory="data"), name="data")
+
 templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
@@ -66,15 +68,16 @@ async def vod(request: Request, vod_id: int = Form(), vod_old_id: int = Form()):
 
   twitch_api.dl_vod(vod_id)
   df = twitch_api.read_chat_vod(vod_id)
-  print(df)
+
   df_t = twitch_api.treatment_df(df)
   df_v = twitch_api.msg_per_minutes(df_t)
   # test = twitch_api.determine_n_best_moment(5, df_v, vod_id)
-  list_clips = twitch_api.get_n_best_moment(5, vod_id, infos_vod)
+  list_clips, url_mounted = twitch_api.get_n_best_moment(5, vod_id, infos_vod)
 
   infos_chart = {
     'labels' : df_v['date'].tolist(),
-    'data' : df_v['nb_messages'].tolist()
+    'nb_messages' : df_v['nb_messages'].tolist(),
+    'content_offset_seconds' : df_v['content_offset_seconds'].tolist()
   }
   
   s1 = timeparse(infos_vod['duration'])
@@ -90,5 +93,4 @@ async def vod(request: Request, vod_id: int = Form(), vod_old_id: int = Form()):
     'evol_duration' : round(((time_1 - time_2)/time_2)*100,2),
   }
   data['infos_chart'] = infos_chart
-  
-  return templates.TemplateResponse("vod.html", {"request": request, "vod_data": data, "list_clips": list_clips})
+  return templates.TemplateResponse("vod.html", {"request": request, "vod_data": data, "list_clips": list_clips, "url_mounted": url_mounted})
