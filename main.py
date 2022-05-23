@@ -4,7 +4,7 @@ import pytz
 import twitch_api
 
 from datetime import datetime, timedelta
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Form, Request, BackgroundTasks
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -61,8 +61,8 @@ async def get_vod_streamer(request: Request, name: str = Form()):
 
   return templates.TemplateResponse("list_vods.html", {"request": request, "list_vods": list_vods})
 
-@app.post("/vod", response_class=HTMLResponse)
-async def vod(request: Request, vod_id: int = Form(), vod_old_id: int = Form()):
+@app.post("/vod", response_class=HTMLResponse,)
+async def vod(request: Request, background_tasks: BackgroundTasks, vod_id: int = Form(), vod_old_id: int = Form()):
   infos_vod = twitch_api.read_info_vod(vod_id)
   old_infos_vod = twitch_api.read_info_vod(vod_old_id)
 
@@ -72,7 +72,7 @@ async def vod(request: Request, vod_id: int = Form(), vod_old_id: int = Form()):
   df_t = twitch_api.treatment_df(df)
   df_v = twitch_api.msg_per_minutes(df_t)
   # test = twitch_api.determine_n_best_moment(5, df_v, vod_id)
-  list_clips, url_mounted = twitch_api.get_n_best_moment(5, vod_id, infos_vod)
+  list_clips, url_mounted = twitch_api.get_n_best_moment(5, vod_id, infos_vod, background_tasks)
 
   infos_chart = {
     'labels' : df_v['date'].tolist(),

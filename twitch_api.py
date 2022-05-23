@@ -6,7 +6,7 @@ import json
 import twitch
 import requests
 import urllib.request
-
+from fastapi import BackgroundTasks
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from pytimeparse.timeparse import timeparse
@@ -73,7 +73,7 @@ def determine_n_best_moment(nb, df, VIDEO_ID):
 
     return
 
-def get_n_best_moment(n, VIDEO_ID, infos_vod):
+def get_n_best_moment(n, VIDEO_ID, infos_vod, background_tasks):
     helix = twitch.Helix(CLIENT_ID, CLIENT_SECRET)
 
     url = (f'https://api.twitch.tv/helix/clips?broadcaster_id={infos_vod["user_id"]}&started_at={infos_vod["created_at_RFC"]}&ended_at={infos_vod["ended_at_RFC"]}&first={n}')
@@ -115,8 +115,8 @@ def get_n_best_moment(n, VIDEO_ID, infos_vod):
             print(e)
             print("An exception occurred")
 
-    # url_mounted = concat_clips(VIDEO_ID, list_clips_to_mount)
-    url_mounted = ""
+    background_tasks.add_task(concat_clips, VIDEO_ID, list_clips_to_mount)
+    url_mounted = "/"+str(VIDEO_ID)+"/clips.mp4"
     return list_clips, url_mounted
 
 def read_chat_vod(VIDEO_ID):

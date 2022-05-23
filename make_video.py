@@ -9,6 +9,7 @@ IMAGEMAGICK_BINARY = os.getenv ('IMAGEMAGICK_BINARY', 'C:\Program Files\ImageMag
 
 def concat_clips(VIDEO_ID, list_clips):
     to_concat = []
+    print("start clip")
     for clip in list_clips:
         clipx = VideoFileClip(clip['path'])
 
@@ -22,10 +23,9 @@ def concat_clips(VIDEO_ID, list_clips):
                         color=(0,0,0), pos=('left','center'), col_opacity=0.6)
 
         f = CompositeVideoClip([clipx,txt_col.set_duration(clipx.duration)])
-
         to_concat.append(f)
 
     final = concatenate_videoclips(to_concat)
-    final.write_videofile("./data/"+str(VIDEO_ID)+"/clips.mp4",temp_audiofile="./data/"+str(VIDEO_ID)+"/tmp.mp3")
-
+    final.resize(width=480).write_videofile("./data/"+str(VIDEO_ID)+"/clips.mp4",temp_audiofile="./data/"+str(VIDEO_ID)+"/tmp.mp3", logger=None , threads=8, fps=30)
+    print("end clip")
     return "/"+str(VIDEO_ID)+"/clips.mp4"
